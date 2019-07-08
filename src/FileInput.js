@@ -29,7 +29,7 @@ export default class FileInput extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <label>
-          Upload file:
+          Upload file: <br/>
           <input type="file" name="image" ref={(ref) => { this.fileInput = ref; }} />
         </label>
         <br />
