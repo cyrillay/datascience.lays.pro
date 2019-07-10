@@ -1,0 +1,26 @@
+# clone le repo
+# build le repo
+# push en scp le build au bon dossier
+kind: pipeline
+name: datascience-front-end
+
+steps:
+- name: build
+  image: alpine
+  commands:
+  - npm run build
+  when:
+    branch:
+    - master
+
+  scp:
+    image: appleboy/drone-scp
+    settings:
+      host: www.datascience.lays.pro
++     username: ubuntu
+      target: ~/
+      source: ./build
+      secrets: [ SERVER_KEY ]
+  when:
+    branch:
+    - master
