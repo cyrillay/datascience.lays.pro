@@ -1,4 +1,4 @@
-# CI pipeline for building the front-end, and deploying it through scp
+# CI pipeline for building the front-end at datascience.lays.pro, and deploying it through scp
 
 kind: pipeline
 name: datascience-front-end
@@ -8,20 +8,19 @@ steps:
   image: node
   commands:
   - touch test
-  # - npm install
-  # - npm run build
+  - npm install
+  - npm run build
   when:
     branch:
     - master
     
-- name: scp
+- name: deploy_scp
   image: appleboy/drone-scp
   settings:
     host: www.datascience.lays.pro
     username: ubuntu
-    target: /var/www/lays.pro/datascience
-    source: ./test
-     #./build
+    target: ~/
+    source: ./build
   environment:
     SSH_KEY:
       from_secret: SERVER_KEY
