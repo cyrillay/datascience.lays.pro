@@ -20,7 +20,7 @@ steps:
     host: www.datascience.lays.pro
     username: ubuntu
     target: ${TARGET_PATH}
-    source: test
+    source: ./test
      #./build
   environment:
     SSH_KEY:
