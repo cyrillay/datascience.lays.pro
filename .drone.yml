@@ -17,7 +17,7 @@ steps:
     image: appleboy/drone-scp
     settings:
       host: www.datascience.lays.pro
-+     username: ubuntu
+      username: ubuntu
       target: ~/
       source: ./build
       secrets: [ SERVER_KEY ]
