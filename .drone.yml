@@ -1,6 +1,5 @@
-# clone le repo
-# build le repo
-# push en scp le build au bon dossier
+# CI pipeline for building the front-end, and deploying it through scp
+
 kind: pipeline
 name: datascience-front-end
 
@@ -8,8 +7,9 @@ steps:
 - name: build
   image: node
   commands:
-  - npm install
-  - npm run build
+  - touch test
+  # - npm install
+  # - npm run build
   when:
     branch:
     - master
@@ -19,11 +19,14 @@ steps:
   settings:
     host: www.datascience.lays.pro
     username: ubuntu
-    target: ~/
-    source: ./build
+    target: ${TARGET_PATH}
+    source: test
+     #./build
   environment:
     SSH_KEY:
       from_secret: SERVER_KEY
+    TARGET_PATH:
+      from_secrets: TARGET_PATH
   when:
     branch:
     - master
