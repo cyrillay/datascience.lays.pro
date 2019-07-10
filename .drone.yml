@@ -8,12 +8,13 @@ steps:
 - name: build
   image: node
   commands:
+  - npm install
   - npm run build
   when:
     branch:
     - master
 
-  scp:
+- name: scp
     image: appleboy/drone-scp
     settings:
       host: www.datascience.lays.pro
