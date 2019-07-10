@@ -13,15 +13,15 @@ steps:
   when:
     branch:
     - master
-
-  scp:
-    image: appleboy/drone-scp
-    settings:
-      host: www.datascience.lays.pro
-      username: ubuntu
-      target: ~/
-      source: ./build
-      secrets: [ SERVER_KEY ]
+    
+- name: scp
+  image: appleboy/drone-scp
+  settings:
+    host: www.datascience.lays.pro
+    username: ubuntu
+    target: ~/
+    source: ./build
+    secrets: [ SERVER_KEY ]
   when:
     branch:
     - master
