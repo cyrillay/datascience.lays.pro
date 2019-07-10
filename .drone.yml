@@ -6,7 +6,7 @@ name: datascience-front-end
 
 steps:
 - name: build
-  image: alpine
+  image: node
   commands:
   - npm run build
   when:
