@@ -1,4 +1,4 @@
-# CI pipeline for building the front-end at datascience.lays.pro, and deploying it through scp
+# CI pipeline for building the front-end at datascience.lays.pro, and deploying it with scp
 
 kind: pipeline
 name: datascience-front-end
