@@ -19,7 +19,7 @@ steps:
   settings:
     host: www.datascience.lays.pro
     username: ubuntu
-    target: /var/www/lays.pro/datascience/
+    target: /var/www/lays.pro/datascience
     source: ./test
      #./build
   environment:
