@@ -7,7 +7,6 @@ steps:
 - name: build
   image: node
   commands:
-  - touch test
   - npm install
   - npm run build
   when:
