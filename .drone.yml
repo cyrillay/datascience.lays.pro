@@ -14,7 +14,7 @@ steps:
     branch:
     - master
 
-- name: scp
+  scp:
     image: appleboy/drone-scp
     settings:
       host: www.datascience.lays.pro
