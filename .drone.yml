@@ -23,8 +23,6 @@ steps:
   environment:
     SSH_KEY:
       from_secret: SERVER_KEY
-    TARGET_PATH:
-      from_secrets: TARGET_PATH
   when:
     branch:
     - master
