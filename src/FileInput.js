@@ -1,53 +1,68 @@
 import React from "react";
+import Images from "./Images.js";
 
 export default class FileInput extends React.Component {
   constructor(props) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.getPredictions = this.getPredictions.bind(this);
+    this.loadImages = this.loadImages.bind(this)
     this.fileInput = React.createRef();
-    this.initialState = { output: "Press submit to discover the prediction !", image: undefined };
+    this.initialState = {
+      images: [],
+      imageFilesToPredictions: new Map()
+    };
     this.state = this.initialState;
   }
-  async handleSubmit(event) {
+
+  /**
+   * Calls the inference-api back-end to classify the input images
+   * and update the state with the returned predictions
+   */
+  async getPredictions(event) {
     event.preventDefault();
-    const data = new FormData();
 
-    // TODO : add multi-file support
-    console.log(this.fileInput.files);
-    Array.from(this.fileInput.files).forEach(element => {
-      console.log("ok, elem = " + element);
+    const imageFilesToPredictions = new Map();
+    for (const file of this.fileInput.files) {
+      const payload = new FormData();
+      payload.append("image", file);
+      const response = await fetch("http://lays.pro:5000/predict", {
+        method: "POST",
+        body: payload
+      });
+      const jsonResponse = await response.json();
+      imageFilesToPredictions.set(file, jsonResponse["predictions"][0]);
+    }
+    this.setState({
+      imageFilesToPredictions: imageFilesToPredictions
     });
-
-    data.append("image", this.fileInput.files[0]);
-
-    const response = await fetch("http://lays.pro:5000/predict", {
-      method: "POST",
-      body: data
-    });
-    const body = await response.json();
-
-    console.log(body["predictions"][0]["label"]);
-    const prediction = body["predictions"][0]["label"];
-    this.setState({ output: "Your image was classified as : " + prediction });
   }
 
-  displayImage() {
+  /**
+   * Update the state with the loaded images from the user
+   */
+  loadImages() {
     this.setState(this.initialState);
-    var file = this.fileInput.files[0];
-    var reader = new FileReader();
-    reader.readAsDataURL(file);
 
-    reader.onloadend = function(e) {
-      this.setState({
-        image: [reader.result]
-      });
-    }.bind(this);
+    const files = Array.from(this.fileInput.files);
+    // TODO : investigate a more efficient way of doing this (in parallel/using Promise.all...)
+    files.forEach(file => {
+      let reader = new FileReader();
+      reader.onloadend = function(e) {
+        this.setState({
+          images: [
+            ...this.state.images,
+            { file: file, loadedFile: e.target.result }
+          ]
+        });
+      }.bind(this);
+      reader.readAsDataURL(file);
+    });
   }
 
   render() {
     return (
       <div>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.getPredictions}>
           <label>
             <br />
             <br />
@@ -61,11 +76,11 @@ export default class FileInput extends React.Component {
                 className="custom-file-input"
                 id="validatedCustomFile"
                 name="image"
-                multiple=""
+                multiple
                 ref={ref => {
                   this.fileInput = ref;
                 }}
-                onChange={this.displayImage.bind(this)}
+                onChange={this.loadImages}
               />
               <label className="custom-file-label">Choose file...</label>
               <div className="invalid-feedback">
@@ -79,26 +94,11 @@ export default class FileInput extends React.Component {
           </button>
         </form>
         <br />
-        <Image image={this.state.image} prediction={this.state.output} />
+        <Images
+          images={this.state.images}
+          imagesAndPredictions={this.state.imageFilesToPredictions}
+        />
       </div>
     );
   }
-}
-
-function Image(props) {
-  if (props.image === undefined) {
-    return null;
-  } else
-    return (
-      <div className="card mx-auto" style={{ width: "18rem" }}>
-        <img
-          src={props.image}
-          className="card-img-top"
-          alt="File Reader not supported on this browser"
-        />
-        <div className="card-body">
-          <h5 className="card-title">{props.prediction}</h5>
-        </div>
-      </div>
-    );
 }
